@@ -1,0 +1,2 @@
+cn.zd.cer.framework.datasource.config.ZdDataSourceAutoConfiguration
+cn.zd.cer.framework.mybatis.config.ZdMybatisAutoConfiguration

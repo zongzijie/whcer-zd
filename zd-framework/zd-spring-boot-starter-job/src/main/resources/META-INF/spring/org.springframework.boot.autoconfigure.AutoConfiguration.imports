@@ -1,0 +1,2 @@
+cn.zd.cer.framework.quartz.config.ZdQuartzAutoConfiguration
+cn.zd.cer.framework.quartz.config.ZdAsyncAutoConfiguration

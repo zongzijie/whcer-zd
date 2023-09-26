@@ -1,0 +1,2 @@
+cn.zd.cer.framework.security.config.ZdSecurityAutoConfiguration
+cn.zd.cer.framework.security.config.ZdWebSecurityConfigurerAdapter

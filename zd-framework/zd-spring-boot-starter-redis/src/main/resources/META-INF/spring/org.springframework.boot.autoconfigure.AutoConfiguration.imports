@@ -1,0 +1,2 @@
+cn.zd.cer.framework.redis.config.ZdRedisAutoConfiguration
+cn.zd.cer.framework.redis.config.ZdCacheAutoConfiguration

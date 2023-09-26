@@ -1,0 +1,5 @@
+cn.zd.cer.framework.apilog.config.ZdApiLogAutoConfiguration
+cn.zd.cer.framework.jackson.config.ZdJacksonAutoConfiguration
+cn.zd.cer.framework.swagger.config.ZdSwaggerAutoConfiguration
+cn.zd.cer.framework.web.config.ZdWebAutoConfiguration
+cn.zd.cer.framework.xss.config.ZdXssAutoConfiguration

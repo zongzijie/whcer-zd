@@ -61,6 +61,14 @@ public class AuthController {
     @Resource
     private SecurityProperties securityProperties;
 
+    @PostMapping("/register")
+    @PermitAll
+    @Operation(summary = "注册帐号")
+    @OperateLog(enable = false) // 避免 Post 请求被记录操作日志
+    public CommonResult<AuthLoginRespVO> register(@RequestBody @Valid AuthLoginReqVO reqVO) {
+        return success(authService.login(reqVO));
+    }
+
     @PostMapping("/login")
     @PermitAll
     @Operation(summary = "使用账号密码登录")

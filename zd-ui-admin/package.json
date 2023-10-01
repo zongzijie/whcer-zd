@@ -1,7 +1,7 @@
 {
   "name": "zd-ui-admin",
   "version": "1.8.0-snapshot",
-  "description": "武汉CER注册登记系统",
+  "description": "碳普惠登记平台",
   "author": "芋道",
   "license": "MIT",
   "scripts": {

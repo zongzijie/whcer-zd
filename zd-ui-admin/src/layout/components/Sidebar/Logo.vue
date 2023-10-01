@@ -35,7 +35,7 @@ export default {
   },
   data() {
     return {
-      title: '武汉CER注册登记系统',
+      title: '碳普惠登记平台',
       logo: logoImg
     }
   }

@@ -13,7 +13,7 @@
         <!-- Server 主项目 -->
         <module>zd-server</module>
         <!-- 各种 module 拓展 -->
-        <module>zd-module-member</module>
+<!--        <module>zd-module-member</module>-->
         <module>zd-module-system</module>
         <module>zd-module-infra</module>
         <!--        <module>zd-module-bpm</module>-->

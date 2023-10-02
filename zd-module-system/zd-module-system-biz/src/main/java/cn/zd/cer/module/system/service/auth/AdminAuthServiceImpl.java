@@ -11,6 +11,7 @@ import cn.zd.cer.module.system.api.sms.SmsCodeApi;
 import cn.zd.cer.module.system.api.social.dto.SocialUserBindReqDTO;
 import cn.zd.cer.module.system.api.social.dto.SocialUserRespDTO;
 import cn.zd.cer.module.system.controller.admin.auth.vo.*;
+import cn.zd.cer.module.system.controller.admin.user.vo.user.UserCreateReqVO;
 import cn.zd.cer.module.system.convert.auth.AuthConvert;
 import cn.zd.cer.module.system.dal.dataobject.oauth2.OAuth2AccessTokenDO;
 import cn.zd.cer.module.system.dal.dataobject.user.AdminUserDO;
@@ -90,6 +91,25 @@ public class AdminAuthServiceImpl implements AdminAuthService {
             throw exception(AUTH_LOGIN_USER_DISABLED);
         }
         return user;
+    }
+
+    @Override
+    public AuthLoginRespVO register(AuthRegisterReqVO reqVO) {
+        // 校验验证码
+//        smsCodeApi.useSmsCode(AuthConvert.INSTANCE.convert(reqVO, SmsSceneEnum.ADMIN_MEMBER_LOGIN.getScene(), getClientIP()));
+
+        UserCreateReqVO user=new UserCreateReqVO();
+        user.setUsername(reqVO.getMobile());
+        user.setNickname(reqVO.getNickname());
+        user.setMobile(reqVO.getMobile());
+        user.setPassword(reqVO.getPassword());
+        userService.createUser(user);
+
+        // 使用账号密码，进行登录
+        AdminUserDO loginUser = authenticate(user.getUsername(), user.getPassword());
+
+        // 创建 Token 令牌，记录登录日志
+        return createTokenAfterLoginSuccess(loginUser.getId(), loginUser.getUsername(), LoginLogTypeEnum.LOGIN_USERNAME);
     }
 
     @Override

@@ -24,6 +24,14 @@ public interface AdminAuthService {
     AdminUserDO authenticate(String username, String password);
 
     /**
+     * 账号注册
+     *
+     * @param reqVO 注册信息
+     * @return 注册结果
+     */
+    AuthLoginRespVO register(@Valid AuthRegisterReqVO reqVO);
+
+    /**
      * 账号登录
      *
      * @param reqVO 登录信息

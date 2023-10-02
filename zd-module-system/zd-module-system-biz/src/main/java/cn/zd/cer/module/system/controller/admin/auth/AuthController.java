@@ -65,8 +65,8 @@ public class AuthController {
     @PermitAll
     @Operation(summary = "注册帐号")
     @OperateLog(enable = false) // 避免 Post 请求被记录操作日志
-    public CommonResult<AuthLoginRespVO> register(@RequestBody @Valid AuthLoginReqVO reqVO) {
-        return success(authService.login(reqVO));
+    public CommonResult<AuthLoginRespVO> register(@RequestBody @Valid AuthRegisterReqVO reqVO) {
+        return success(authService.register(reqVO));
     }
 
     @PostMapping("/login")

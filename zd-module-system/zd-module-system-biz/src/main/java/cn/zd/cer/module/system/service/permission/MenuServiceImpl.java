@@ -1,6 +1,7 @@
 package cn.zd.cer.module.system.service.permission;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.zd.cer.module.system.controller.admin.permission.vo.menu.MenuCreateReqVO;
 import cn.zd.cer.module.system.controller.admin.permission.vo.menu.MenuListReqVO;
 import cn.zd.cer.module.system.controller.admin.permission.vo.menu.MenuUpdateReqVO;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static cn.zd.cer.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -131,6 +133,9 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public List<MenuDO> getMenuList(Collection<Long> ids) {
+        if (CollectionUtil.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
         return menuMapper.selectBatchIds(ids);
     }
 

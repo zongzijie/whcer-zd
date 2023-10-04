@@ -273,7 +273,7 @@
             <el-table-column align="center" fixed="right" label="操作" width="160">
               <template #default>
                 <!-- TODO 权限后续补齐 -->
-                <div class="flex justify-center items-center">
+                <div class="flex items-center justify-center">
                   <el-button link type="primary" @click="openDetail(scope.row.id)">
                     <Icon icon="ep:notification" />
                     详情

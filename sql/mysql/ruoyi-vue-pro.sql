@@ -3470,6 +3470,8 @@ CREATE TABLE `system_tenant`  (
   `industry_text` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '所属行业名称',
   `registration_date` datetime NULL DEFAULT NULL COMMENT '注册日期',
   `registered_capital` int NULL DEFAULT NULL COMMENT'注册资本（万元）',
+  `registered_province` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '注册省份',
+  `registered_city` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '注册城市',
   `registered_address` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '注册地址',
   `corporate` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '法人信息',
   `corporate_id_card` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '法人身份证号',

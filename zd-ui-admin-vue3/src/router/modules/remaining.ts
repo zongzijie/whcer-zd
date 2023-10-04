@@ -128,7 +128,6 @@ const remainingRouter: AppRouteRecordRaw[] = [
       }
     ]
   },
-
   {
     path: '/codegen',
     component: Layout,
@@ -182,6 +181,17 @@ const remainingRouter: AppRouteRecordRaw[] = [
     meta: {
       hidden: true,
       title: t('router.login'),
+      noTagsView: true
+    }
+  },
+
+  {
+    path: '/tenant/auth',
+    component: () => import('@/views/system/tenant/AuthWizard.vue'),
+    name: 'TenantAuth',
+    meta: {
+      hidden: true,
+      title: '企业账户开通',
       noTagsView: true
     }
   },

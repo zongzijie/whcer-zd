@@ -11,17 +11,24 @@ import * as AreaApi from "@/api/system/area";
 import InputForm from "@/views/system/tenant/components/InputForm.vue";
 import UploadForm from "@/views/system/tenant/components/UploadForm.vue";
 import CheckoutForm from "@/views/system/tenant/components/CheckoutForm.vue";
+import {CommonStatusEnum} from "@/utils/constants";
 
 const active = ref(1)
-const activeNames = ref(['1', '2'])
 
+const submit=()=>{
+  //TODO:WJJ 待补充持久化逻辑
+  next()
+}
 const next = () => {
   if (active.value++ >= 2) active.value = 0
 }
 const back = () => {
   push({path: "/"})
 }
-
+const handleChange = (e) => {
+  formData.value[e.label] = e.value;
+  console.log(e)
+}
 </script>
 
 <template>
@@ -53,22 +60,16 @@ const back = () => {
             <el-step title="查看审核结果" :icon="Search"/>
           </el-steps>
         </el-header>
-        <el-main >
           <div v-show="active==0" class="mt5 mr30 ml30">
-            <input-form></input-form>
+            <input-form @change="handleChange" @submit="submit"></input-form>
           </div>
           <div v-show="active==1" class="mt5 mr30 ml30">
-            <upload-form></upload-form>
+            <upload-form @change="handleChange" @submit="submit"></upload-form>
           </div>
           <div v-show="active==2" class="mt5 mr30 ml30">
-            <checkout-form></checkout-form>
+            <checkout-form @submit="submit"></checkout-form>
           </div>
-        </el-main>
-        <el-footer>
-          <div class="account-auth__form-toolbar text-center mt-10px">
-            <el-button style="margin-top: 12px" @click="next">Next step</el-button>
-          </div>
-        </el-footer>
+
       </el-container>
     </div>
 
@@ -78,29 +79,4 @@ const back = () => {
 <style lang="less" scoped>
 
 
-.account-auth__form-toolbar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 0;
-  padding: 24px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  min-height: 32px;
-  //background-color: white;
-}
-
-:deep(.is-required--item) {
-  position: relative;
-
-  &::before {
-    margin-right: 4px;
-    color: var(--el-color-danger);
-    content: '*';
-  }
-
-}
 </style>

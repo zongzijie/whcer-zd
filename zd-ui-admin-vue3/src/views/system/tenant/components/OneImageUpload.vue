@@ -3,24 +3,26 @@
       v-model:file-list="fileList"
       ref="uploadRef"
       class="upload-demo"
-      :class="{ haveImg:fileLoading|| !!file.url }"
+      :class="{ haveImg:fileLoading|| fileList.length>0 }"
       list-type="picture-card"
       drag
       :headers="uploadHeaders"
       :limit="1"
       :before-upload="handleBeforeUpload"
       :on-preview="handlePictureCardPreview"
-      :on-remove="()=>{handleRemove('bln_file')}"
+      :on-remove="handleRemove"
       :on-error="submitFormError"
       :on-progress="handleProgress"
       :on-exceed="handleExceed"
       :on-success="(a,b)=>{submitFormSuccess(a,b,'bln_file')}"
-      accept=".jpg, .png, .gif"
       :action="url"
   >
     <el-icon class="el-icon--upload">
       <upload-filled/>
     </el-icon>
+    <div class="el-upload__text">
+      {{ props.remark }}
+    </div>
     <div class="el-upload__text">
       <em>点击上传</em> / 拖拽到此区域
     </div>
@@ -31,7 +33,7 @@
     </template>
   </el-upload>
   <el-dialog v-model="dialogVisible">
-    <img w-full :src="dialogImageUrl" alt="Preview Image" />
+    <img w-full :src="dialogImageUrl" alt="Preview Image"/>
   </el-dialog>
 </template>
 <script setup lang="tsx">
@@ -44,10 +46,12 @@ import {getAccessToken, getTenantId} from '@/utils/auth'
 import {UploadProps, UploadUserFile} from "element-plus";
 import {propTypes} from "@/utils/propTypes";
 
-const props =defineProps({
-  img: propTypes.string.def(''),
-  name: propTypes.string.def('')
+const props = defineProps({
+  remark: propTypes.string.def(''),
+  modelValue: propTypes.string.def('')
 })
+
+const emit = defineEmits(['update:modelValue'])
 
 const url = import.meta.env.VITE_UPLOAD_URL
 const uploadHeaders = ref() // 上传 Header 头
@@ -55,17 +59,17 @@ const uploadRef = ref()
 const {t} = useI18n() // 国际化
 const message = useMessage() // 消息弹窗
 
-const fileLoading=ref(false)
+const fileLoading = ref(false)
 
 const formLoading = ref(false) // 表单的加载中：1）修改时的数据加载；2）提交的按钮禁用
-const file = ref({url:props.img,name:props.name})
+const file = ref({url: props.img, name: props.name})
 
-const fileList =props.img?ref<UploadUserFile[]>([
+const fileList = props.img ? ref<UploadUserFile[]>([
   {
     name: props.name,
-    url: props.img,
+    url: props.modelValue,
   }
-]):ref<UploadUserFile[]>([])
+]) : ref<UploadUserFile[]>([])
 
 const dialogImageUrl = ref('')
 const dialogVisible = ref(false)
@@ -73,13 +77,9 @@ const handlePictureCardPreview: UploadProps['onPreview'] = (uploadFile) => {
   dialogImageUrl.value = uploadFile.url!
   dialogVisible.value = true
 }
-const handleRemove = (name) => {
-  console.log(name)
-  file.value.url = undefined;
+const handleRemove = () => {
+  emit('update:modelValue', undefined)
   unref(uploadRef)?.clearFiles()
-  emit('change',file)
-  console.log(fileList)
-
 }
 const handleProgress = (name) => {
 }
@@ -115,21 +115,16 @@ const handleBeforeUpload = (e) => {
 }
 
 
-/** 文件上传成功处理 */
-const emit = defineEmits(['change']) // 定义 success 事件，用于操作成功后的回调
 const submitFormSuccess = (response,
                            uploadFile, field) => {
   // 清理
   formLoading.value = false
   fileLoading.value = false
-  // unref(uploadRef)?.clearFiles()
   // 提示成功，并刷新
   message.success(t('common.createSuccess'))
-  console.log(response)
-  console.log(uploadFile)
-  console.log(field)
   file.value.url = response.data
-  emit('change',file)
+  emit('update:modelValue', response.data)
+  emit('change', file)
 }
 
 /** 上传错误提示 */
@@ -137,7 +132,7 @@ const submitFormError = (): void => {
   message.error('上传失败，请您重新上传！')
   formLoading.value = false
   fileLoading.value = false
-  file.value.url=undefined
+  file.value.url = undefined
   uploadRef.value?.clearFiles()
 }
 
@@ -163,7 +158,8 @@ const handleExceed = (): void => {
   width: 340px;
   min-width: 148px;
 }
-:deep .el-upload-dragger{
+
+:deep .el-upload-dragger {
   height: 230px;
 }
 
@@ -172,13 +168,15 @@ const handleExceed = (): void => {
     display: none;
   }
 }
-:deep .el-upload-list__item-actions{
+
+:deep .el-upload-list__item-actions {
   --el-upload-list-picture-card-size: 230px;
 
   .el-upload-list__item {
     width: 340px;
   }
 }
+
 :deep .el-upload-list--picture-card {
   --el-upload-list-picture-card-size: 230px;
 

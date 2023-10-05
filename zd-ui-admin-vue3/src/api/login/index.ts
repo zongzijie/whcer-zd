@@ -1,6 +1,7 @@
 import request from '@/config/axios'
 import { getRefreshToken } from '@/utils/auth'
 import type { UserLoginVO } from './types'
+import {UserRegisterVO} from "./types";
 
 export interface SmsCodeVO {
   mobile: string
@@ -10,6 +11,11 @@ export interface SmsCodeVO {
 export interface SmsLoginVO {
   mobile: string
   code: string
+}
+
+// 注册
+export const register = (data: UserRegisterVO) => {
+  return request.post({ url: '/system/auth/register', data })
 }
 
 // 登录

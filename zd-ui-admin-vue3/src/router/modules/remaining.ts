@@ -186,7 +186,7 @@ const remainingRouter: AppRouteRecordRaw[] = [
   },
 
   {
-    path: '/tenant/auth',
+    path: '/tenant-auth',
     component: () => import('@/views/system/tenant/AuthWizard.vue'),
     name: 'TenantAuth',
     meta: {

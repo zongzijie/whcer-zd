@@ -1,6 +1,6 @@
 <template>
 
-  <el-main >
+  <el-main>
     <el-form
         ref="formRef"
         v-loading="formLoading"
@@ -19,24 +19,63 @@
             </div>
           </template>
           <el-row>
-            <el-col :span="8"
-            >
+            <el-col :span="8">
               <el-form-item label="营业执照" prop="bln_file">
-                <one-image-upload :img="formData.bln_file" name="bln_file" @change="handleChange"></one-image-upload>
+                <one-image-upload v-model="formData.bln_file"></one-image-upload>
               </el-form-item>
             </el-col>
-            <el-col :span="8"
-            >
-              <el-form-item label="法人身份证正面" prop="bln_file">
-                <one-image-upload :img="formData.corporate_id_card_file_front" name="corporate_id_card_file_front"
-                                  @change="handleChange"></one-image-upload>
+
+            <el-col :span="8" v-if="!formData.three_in_one">
+              <el-form-item label="组织机构代码证" prop="unit_code_file">
+                <one-image-upload v-model="formData.unit_code_file"></one-image-upload>
               </el-form-item>
             </el-col>
-            <el-col :span="8"
-            >
-              <el-form-item label="法人身份证反面" prop="bln_file">
-                <one-image-upload :img="formData.corporate_id_card_file_back" name="corporate_id_card_file_back"
-                                  @change="handleChange"></one-image-upload>
+            <el-col :span="8" v-if="!formData.three_in_one">
+              <el-form-item label="税务登记证" prop="tax_id_file">
+                <one-image-upload v-model="formData.tax_id_file"></one-image-upload>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+              <el-form-item label="法人身份证正面" prop="corporate_id_card_file_front">
+                <one-image-upload remark="身份证正面"
+                                  v-model="formData.corporate_id_card_file_front"></one-image-upload>
+
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+              <el-form-item label="法人身份证反面" prop="corporate_id_card_file_back">
+                <one-image-upload remark="身份证反面"
+                                  v-model="formData.corporate_id_card_file_back"></one-image-upload>
+
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row v-if="formData.contact_id_card!==formData.corporate_id_card">
+            <el-col :span="8">
+              <el-form-item label="账户代表授权委托书" prop="contact_authorize_file">
+                <one-image-upload v-model="formData.contact_authorize_file"></one-image-upload>
+                <template #label>
+                  账户代表授权委托书（
+                  <el-link type="primary" @click="handleDownloadTemp">点击下载模板</el-link>
+                  ）
+                </template>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="账户代表身份证正面" prop="contact_id_card_file_front">
+                <one-image-upload remark="身份证正面"
+                                  v-model="formData.contact_id_card_file_front"></one-image-upload>
+
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+              <el-form-item label="账户代表身份证反面" prop="contact_id_card_file_back">
+                <one-image-upload remark="身份证反面" v-model="formData.contact_id_card_file_back"></one-image-upload>
+
               </el-form-item>
             </el-col>
           </el-row>
@@ -45,9 +84,10 @@
     </el-form>
   </el-main>
   <el-footer>
-    <div class="account-auth__form-toolbar text-center mt-10px">
-      <el-button style="margin-top: 12px" @click="next">Next step</el-button>
-    </div>
+    <el-card class="account-auth__form-toolbar text-center mt-10px" shadow="always">
+      <el-button style="margin-top: 12px" @click="prev">上一步</el-button>
+      <el-button style="margin-top: 12px" type="primary" @click="next">提交认证</el-button>
+    </el-card>
   </el-footer>
 </template>
 <script setup lang="tsx">
@@ -56,10 +96,14 @@ import * as PostApi from "@/api/system/post";
 defineOptions({name: 'UploadForm'})
 import {ref} from 'vue'
 import {reactive} from 'vue'
-import {CommonStatusEnum} from "@/utils/constants";
 import OneImageUpload from "@/views/system/tenant/components/OneImageUpload.vue";
-import InputForm from "@/views/system/tenant/components/InputForm.vue";
-import CheckoutForm from "@/views/system/tenant/components/CheckoutForm.vue";
+import {propTypes} from "@/utils/propTypes";
+import {CommonStatusEnum} from "@/utils/constants";
+
+const props = defineProps({
+  value: propTypes.object.def({})
+})
+const emit = defineEmits(['change', 'submit', 'prev'])
 
 const dialogVisible = ref(false)
 const disabled = ref(false)
@@ -74,117 +118,32 @@ const active = ref(0)
 const activeNames = ref(['1', '2'])
 
 
-const emit = defineEmits(['change','submit'])
-
 const formLoading = ref(false) // 表单的加载中：1）修改时的数据加载；2）提交的按钮禁用
-const formData = ref({
-  id: undefined,
-  name: undefined,
-  three_in_one: true,
-  uscc: undefined,
-  bln: undefined,
-  bln_file: undefined,
-  unit_code: undefined,
-  unit_code_file: undefined,
-  tax_id: undefined,
-  tax_id_file: undefined,
-  industry: "",
-  industry_text: undefined,
-  registration_date: undefined,
-  registered_capital: undefined,
-  registered_province: undefined,
-  registered_city: undefined,
-  registered_address: undefined,
-  corporate: undefined,
-  corporate_id_card: undefined,
-  corporate_id_card_file_front: undefined,
-  corporate_id_card_file_back: undefined,
-  enterprise_nature: undefined,
-  contact_name: undefined,
-  contact_mobile: undefined,
-  contact_id_card: undefined,
-  contact_authorize_file: undefined,
-  contact_id_card_file_front: undefined,
-  contact_id_card_file_back: undefined,
-  status: CommonStatusEnum.ENABLE
-})
 const formRules = reactive({
-  name: [{required: true, message: '租户名不能为空', trigger: 'blur'}],
+  bln_file: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
+  unit_code_file: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
+  tax_id_file: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
+  corporate_id_card_file_front: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
+  corporate_id_card_file_back: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
+  contact_authorize_file: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
+  contact_id_card_file_front: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
+  contact_id_card_file_back: [{required: true, message: '此文件还未上传', trigger: 'blur'}]
 })
-
+const formData = props.value
 const formRef = ref() // 表单 Ref
-const handleChange = (e) => {
-  formData.value[e.name] = e.url;
-
-  emit('change', {label: e.name, value: e.url})
-  console.log(e)
-  console.log(1)
+const handleDownloadTemp = () => {
+  message.success("下载模板")
 }
-
-const next = () => {
-  if (unref(formRef)?.validate()) {
-    console.log(formData)
-    emit('submit', {data:formData})
-  }
+const next = async () => {
+  const valid = await formRef.value.validate()
+  if (!valid) return
+  console.log('form', formData)
+  emit('submit', {data: formData})
+}
+const prev = async () => {
+  emit('prev', {})
 }
 </script>
 <style lang="less" scoped>
 
-.account-auth__form-toolbar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 0;
-  padding: 24px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  min-height: 32px;
-  //background-color: white;
-}
-
-:deep(.is-required--item) {
-  position: relative;
-
-  &::before {
-    margin-right: 4px;
-    color: var(--el-color-danger);
-    content: '*';
-  }
-
-}
-.el-collapse-item-header {
-  &__title {
-    .content {
-      font-size: large;
-    }
-
-    .info {
-      color: #b4b2b2;
-      margin-left: 5px;
-    }
-
-    .el-link {
-      display: inline;
-      line-height: initial;
-    }
-
-    &::after {
-      position: absolute;
-      top: 10px;
-      left: -10px;
-      width: 4px;
-      height: 50%;
-      background: var(--el-color-primary);
-      content: '';
-    }
-  }
-}
-
-.input-with-select .el-input-group__prepend {
-  background-color: var(--el-fill-color-blank);
-  padding: 0;
-}
 </style>

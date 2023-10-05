@@ -5,9 +5,11 @@
 
   </el-main>
   <el-footer>
-    <div class="account-auth__form-toolbar text-center mt-10px">
-      <el-button style="margin-top: 12px" @click="next">Next step</el-button>
-    </div>
+    <el-card class="account-auth__form-toolbar text-center mt-10px" shadow="always">
+      <el-button style="margin-top: 12px" @click="prev">返回</el-button>
+      <el-button style="margin-top: 12px" type="primary"  @click="next">重新认证</el-button>
+      <el-button style="margin-top: 12px" type="primary" @click="next">登录系统</el-button>
+    </el-card>
   </el-footer>
 </template>
 <script setup lang="tsx">
@@ -20,7 +22,7 @@ import {DICT_TYPE, getIntDictOptions, getStrDictOptions} from "@/utils/dict";
 import {CommonStatusEnum} from "@/utils/constants";
 import {getAreaTree} from '@/api/system/area'
 
-const emit = defineEmits(['change', 'submit'])
+const emit = defineEmits(['change', 'submit','prev'])
 
 const {currentRoute, push} = useRouter()
 
@@ -87,15 +89,8 @@ const formRef = ref() // 表单 Ref
 const next = () => {
   emit('submit', {data:formData})
 }
-const kuaijie = () => {
-  console.log(11)
-}
-const handleChange = () => {
-  console.log(11)
-}
-
-const back = () => {
-  push({path: "/"})
+const prev = async () => {
+  emit('prev',{})
 }
 
 /** 初始化 **/
@@ -106,61 +101,4 @@ onMounted(() => {
 </script>
 <style lang="less" scoped>
 
-.account-auth__form-toolbar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 0;
-  padding: 24px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  min-height: 32px;
-  //background-color: white;
-}
-
-:deep(.is-required--item) {
-  position: relative;
-
-  &::before {
-    margin-right: 4px;
-    color: var(--el-color-danger);
-    content: '*';
-  }
-
-}
-.el-collapse-item-header {
-  &__title {
-    .content {
-      font-size: large;
-    }
-
-    .info {
-      color: #b4b2b2;
-      margin-left: 5px;
-    }
-
-    .el-link {
-      display: inline;
-      line-height: initial;
-    }
-
-    &::after {
-      position: absolute;
-      top: 10px;
-      left: -10px;
-      width: 4px;
-      height: 50%;
-      background: var(--el-color-primary);
-      content: '';
-    }
-  }
-}
-
-.input-with-select .el-input-group__prepend {
-  background-color: var(--el-fill-color-blank);
-  padding: 0;
-}
 </style>

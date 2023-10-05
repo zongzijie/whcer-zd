@@ -1,3 +1,10 @@
+export type UserRegisterVO = {
+  nickname: string
+  mobile: string
+  password: string
+  code: string
+}
+
 export type UserLoginVO = {
   username: string
   password: string

@@ -1,5 +1,6 @@
 package cn.zd.cer.module.system.controller.admin.tenant;
 
+import cn.hutool.core.date.DateUtil;
 import cn.zd.cer.framework.common.pojo.CommonResult;
 import cn.zd.cer.framework.common.pojo.PageResult;
 import cn.zd.cer.framework.excel.core.util.ExcelUtils;
@@ -41,6 +42,20 @@ public class TenantController {
         return success(tenantDO != null ? tenantDO.getId() : null);
     }
 
+    @PostMapping("/auth-create")
+    @Operation(summary = "开通租户创建")
+    @PreAuthorize("@ss.hasPermission('system:tenant:create')")
+    public CommonResult<Long> authTenantCreate(@Valid @RequestBody TenantCreateReqVO createReqVO) {
+        return success(tenantService.createTenant(createReqVO));
+    }
+
+    @PostMapping("/auth-update")
+    @Operation(summary = "开通租户更新")
+    @PreAuthorize("@ss.hasPermission('system:tenant:update')")
+    public CommonResult<Boolean> authTenantUpdate(@Valid @RequestBody TenantUpdateReqVO updateReqVO) {
+        tenantService.updateTenant(updateReqVO);
+        return success(true);
+    }
     @PostMapping("/create")
     @Operation(summary = "创建租户")
     @PreAuthorize("@ss.hasPermission('system:tenant:create')")

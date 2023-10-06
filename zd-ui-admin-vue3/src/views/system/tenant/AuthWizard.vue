@@ -1,5 +1,3 @@
-
-
 <template>
   <el-card shadow="always">
     <el-page-header @back="back" class="ml10">
@@ -14,7 +12,8 @@
           <el-tag>碳普惠登记平台</el-tag>
         </div>
       </template>
-    </el-page-header> </el-card>
+    </el-page-header>
+  </el-card>
 
   <el-scrollbar style="width: 100%;">
     <div class="common-layout ml5 mr5 mt5 mb34">
@@ -30,15 +29,15 @@
             <el-step title="查看审核结果" :icon="Search"/>
           </el-steps>
         </el-header>
-          <div v-show="active==0" class="mt5 mr30 ml30">
-            <input-form :value="formData"  @submit="submit"  @prev="back"></input-form>
-          </div>
-          <div v-show="active==1" class="mt5 mr30 ml30">
-            <upload-form :value="formData" @change="handleChange"  @submit="submit" @prev="prev"></upload-form>
-          </div>
-          <div v-show="active==2" class="mt5 mr30 ml30">
-            <checkout-form :value="formData" @submit="submit" @prev="prev"></checkout-form>
-          </div>
+        <div v-if="active==0" class="mt5 mr30 ml30">
+          <input-form :value="formData" @submit="submit" @prev="back" @kuaijie="kuaijie"></input-form>
+        </div>
+        <div v-if="active==1" class="mt5 mr30 ml30">
+          <upload-form :value="formData"  @submit="submit" @prev="prev"></upload-form>
+        </div>
+        <div v-if="active==2" class="mt5 mr30 ml30">
+          <checkout-form :value="formData" @submit="submit" @prev="prev"></checkout-form>
+        </div>
 
       </el-container>
     </div>
@@ -47,7 +46,7 @@
 </template>
 
 <script setup lang="tsx">
-defineOptions({name: 'TenantAuth'})
+import {authTenantCreate, authTenantUpdate, getTenant} from "@/api/system/tenant";
 import {useUserStore} from "@/store/modules/user";
 import {ref} from 'vue'
 import {Edit, Search, Upload} from '@element-plus/icons-vue'
@@ -56,72 +55,113 @@ import UploadForm from "@/views/system/tenant/components/UploadForm.vue";
 import CheckoutForm from "@/views/system/tenant/components/CheckoutForm.vue";
 import {CommonStatusEnum} from "@/utils/constants";
 import {useTagsViewStore} from "@/store/modules/tagsView";
-import {ElMessageBox} from "element-plus";
+import {getUserProfile} from '@/api/system/user/profile'
+import {ElInput, ElMessageBox} from "element-plus";
+import {getConfigKey} from "@/api/infra/config";
+
+defineOptions({name: 'TenantAuth'})
 
 const formData = ref({
   id: undefined,
+  username: undefined,
+  password: undefined,
+  packageId: undefined,
+  expireTime: undefined,
+  accountCount: undefined,
   name: undefined,
-  three_in_one: true,
+  threeInOne: true,
   uscc: undefined,
   bln: undefined,
-  bln_file: undefined,
-  unit_code: undefined,
-  unit_code_file: undefined,
-  tax_id: undefined,
-  tax_id_file: undefined,
+  blnFile: undefined,
+  unitCode: undefined,
+  unitCodeFile: undefined,
+  taxId: undefined,
+  taxIdFile: undefined,
   industry: "",
-  industry_text: undefined,
-  registration_date: undefined,
-  registered_capital: undefined,
-  registered_province: undefined,
-  registered_city: undefined,
-  registered_address: undefined,
+  industryText: undefined,
+  registrationDate: undefined,
+  registeredCapital: undefined,
+  registeredProvince: undefined,
+  registeredCity: undefined,
+  registeredCounty: undefined,
+  registeredAddress: undefined,
   corporate: undefined,
-  corporate_id_card: undefined,
-  corporate_id_card_file_front: undefined,
-  corporate_id_card_file_back: undefined,
-  enterprise_nature: undefined,
-  contact_name: 'test',
-  contact_mobile: 17698473827,
-  contact_id_card: undefined,
-  contact_authorize_file: undefined,
-  contact_id_card_file_front: undefined,
-  contact_id_card_file_back: undefined,
+  corporateIdCard: undefined,
+  corporateIdCardFileFront: undefined,
+  corporateIdCardFileBack: undefined,
+  enterpriseNature: undefined,
+  contactName: 'test',
+  contactMobile: 17698473827,
+  contactIdCard: undefined,
+  contactAuthorizeFile: undefined,
+  contactIdCardFileFront: undefined,
+  contactIdCardFileBack: undefined,
   status: CommonStatusEnum.ENABLE
 })
-const {currentRoute, push} = useRouter()
-const active = ref(1)
+const {currentRoute, replace, push} = useRouter()
+const active = ref(0)
 
 
-const { t } = useI18n()
+const {t} = useI18n()
 
 const userStore = useUserStore()
-
+const message = useMessage()
 const tagsViewStore = useTagsViewStore()
 
-
-
-const handleChange=(e)=>{
-  formData.value[e.label]=e.value
-  console.log(e)
-  console.log(formData)
-  console.log("result")
-}
-
-const submit=(e)=>{
-  //TODO:WJJ 待补充持久化逻辑
-  formData.value=e.data
+const submit = async (e) => {
+  console.log(e.data.id)
+  Object.assign(formData.value,e.data)
+  if(e.data.id){
+    const result=await update(e)
+    if (!result){
+      message.alertError("保存失败，请联系管理员。")
+      return
+    }
+  }else{
+    e.data.id = await create(e)
+    const path = currentRoute.value.path
+    let query = currentRoute.value.query
+    query.tenantId = e.data.id
+    await replace({path, query})
+  }
   next()
 }
+
+
+const create = async (e) => {
+  formData.value = e.data
+  formData.value.username = e.data.contactMobile
+  formData.value.password = await getConfigKey("sys.user.init-password")
+  formData.value.accountCount = 9999
+  formData.value.expireTime = new Date("2123-01-01").getTime()
+  formData.value.packageId = 111
+  return await authTenantCreate(formData.value)
+}
+
+const update = async (e) => {
+  return await authTenantUpdate(e.data)
+}
+
 const next = () => {
   if (active.value++ >= 2) active.value = 2
 }
 const prev = () => {
   console.log('prev')
-  if (active.value-- ==0) active.value = 0
+  if (active.value-- == 0) active.value = 0
 }
 const back = () => {
   loginOut()
+}
+
+const getUserInfo = async () => {
+  const {nickname, mobile} = await getUserProfile()
+  formData.value.contactName = nickname
+  formData.value.contactMobile = mobile
+}
+
+const getTenantInfo = async (tenantId) => {
+  const data=await getTenant(tenantId)
+  Object.assign(formData.value,data)
 }
 
 const loginOut = () => {
@@ -133,73 +173,144 @@ const loginOut = () => {
       .then(async () => {
         await userStore.loginOut()
         tagsViewStore.delAllViews()
-        replace('/login?redirect=/index')
+        await replace('/login?redirect=/index')
       })
-      .catch(() => {})
+      .catch(() => {
+      })
 }
+
+const kuaijie = async () => {
+  //拉取湖北注登的数据
+  const name = ref<string>('')
+  const pass = ref<string>('')
+  await ElMessageBox({
+    title: '湖北注登系统帐号验证',
+    // Should pass a function if VNode contains dynamic props
+    message: () =>
+        h('p', null, [
+          h('span', null, '帐号：'),
+          h(ElInput, {
+            modelValue: name.value,
+            'onUpdate:modelValue': (val: boolean | string | number) => {
+              name.value = val
+            },
+          }),
+          h('p', null, ''),
+          h('span', null, '密码'),
+          h(ElInput, {
+            modelValue: pass.value,
+            type: "password",
+            'onUpdate:modelValue': (val: boolean | string | number) => {
+              pass.value = val
+            },
+          }),
+        ]),
+    showCancelButton: true,
+    confirmButtonText: '提交',
+    cancelButtonText: '取消',
+    beforeClose: (action, instance, done) => {
+      if (action === 'confirm') {
+        if (name.value == "" || pass.value == "") {
+          message.alertError("请填写帐号密码后提交")
+          return
+        }
+        instance.confirmButtonLoading = true
+        instance.confirmButtonText = '验证中...'
+        setTimeout(() => {
+          done()
+          setTimeout(() => {
+            instance.confirmButtonLoading = false
+          }, 300)
+        }, 3000)
+      } else {
+        done()
+      }
+    },
+  })
+}
+
+onMounted(async () => {
+  const {query: {tenantId}} = currentRoute.value
+  console.log(tenantId)
+  if (tenantId) {
+    await getTenantInfo(tenantId)
+  } else {
+    //企业首次填写时才提示，否则需要自己主动点击快捷注册。
+    await getUserInfo()
+    await ElMessageBox.confirm(t('已开通湖北注册登记系统账户的企业可快捷注册'), t('注册提示'), {
+      confirmButtonText: t('已开通湖北注登系统账户'),
+      cancelButtonText: t('未开通湖北注登系统账户'),
+      type: 'warning'
+    })
+    await kuaijie()
+  }
+
+})
 </script>
 
-<style lang="less" >
- .el-header{
-   min-width: 1333px;
- }
- .el-main{
-   min-width: 1170px;
- }
+<style lang="less">
+.el-header {
+  min-width: 1333px;
+}
 
- .account-auth__form-toolbar {
-   position: fixed;
-   left: 0;
-   right: 0;
-   bottom: 0;
-   z-index: 0;
-   display: flex;
-   flex-direction: row;
-   justify-content: center;
-   align-items: center;
-   min-height: 32px;
- }
+.el-main {
+  min-width: 1170px;
+}
 
- :deep(.is-required--item) {
-   position: relative;
+.account-auth__form-toolbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  min-height: 32px;
+}
 
-   &::before {
-     margin-right: 4px;
-     color: var(--el-color-danger);
-     content: '*';
-   }
+:deep(.is-required--item) {
+  position: relative;
 
- }
- .el-collapse-item-header {
-   &__title {
-     .content {
-       font-size: large;
-     }
+  &::before {
+    margin-right: 4px;
+    color: var(--el-color-danger);
+    content: '*';
+  }
 
-     .info {
-       color: #b4b2b2;
-       margin-left: 5px;
-     }
+}
 
-     .el-link {
-       display: inline;
-       line-height: initial;
-     }
+.el-collapse-item-header {
+  &__title {
+    .content {
+      font-size: large;
+    }
 
-     &::after {
-       position: absolute;
-       top: 10px;
-       left: -10px;
-       width: 4px;
-       height: 50%;
-       background: var(--el-color-primary);
-       content: '';
-     }
-   }
- }
+    .info {
+      color: #b4b2b2;
+      margin-left: 5px;
+    }
 
- .input-with-select .el-input-group__prepend {
-   background-color: var(--el-fill-color-blank);
-   padding: 0;
- }
+    .el-link {
+      display: inline;
+      line-height: initial;
+    }
+
+    &::after {
+      position: absolute;
+      top: 10px;
+      left: -10px;
+      width: 4px;
+      height: 50%;
+      background: var(--el-color-primary);
+      content: '';
+    }
+  }
+}
+
+.input-with-select .el-input-group__prepend {
+  background-color: var(--el-fill-color-blank);
+  padding: 0;
+}
 </style>

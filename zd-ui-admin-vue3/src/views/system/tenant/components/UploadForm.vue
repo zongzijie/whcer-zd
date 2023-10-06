@@ -20,43 +20,43 @@
           </template>
           <el-row>
             <el-col :span="8">
-              <el-form-item label="营业执照" prop="bln_file">
-                <one-image-upload v-model="formData.bln_file"></one-image-upload>
+              <el-form-item label="营业执照" prop="blnFile">
+                <one-image-upload v-model="formData.blnFile"></one-image-upload>
               </el-form-item>
             </el-col>
 
-            <el-col :span="8" v-if="!formData.three_in_one">
-              <el-form-item label="组织机构代码证" prop="unit_code_file">
-                <one-image-upload v-model="formData.unit_code_file"></one-image-upload>
+            <el-col :span="8" v-if="!formData.threeInOne">
+              <el-form-item label="组织机构代码证" prop="unitCodeFile">
+                <one-image-upload v-model="formData.unitCodeFile"></one-image-upload>
               </el-form-item>
             </el-col>
-            <el-col :span="8" v-if="!formData.three_in_one">
-              <el-form-item label="税务登记证" prop="tax_id_file">
-                <one-image-upload v-model="formData.tax_id_file"></one-image-upload>
+            <el-col :span="8" v-if="!formData.threeInOne">
+              <el-form-item label="税务登记证" prop="taxIdFile">
+                <one-image-upload v-model="formData.taxIdFile"></one-image-upload>
               </el-form-item>
             </el-col>
 
             <el-col :span="8">
-              <el-form-item label="法人身份证正面" prop="corporate_id_card_file_front">
+              <el-form-item label="法人身份证正面" prop="corporateIdCardFileFront">
                 <one-image-upload remark="身份证正面"
-                                  v-model="formData.corporate_id_card_file_front"></one-image-upload>
+                                  v-model="formData.corporateIdCardFileFront"></one-image-upload>
 
               </el-form-item>
             </el-col>
 
             <el-col :span="8">
-              <el-form-item label="法人身份证反面" prop="corporate_id_card_file_back">
+              <el-form-item label="法人身份证反面" prop="corporateIdCardFileBack">
                 <one-image-upload remark="身份证反面"
-                                  v-model="formData.corporate_id_card_file_back"></one-image-upload>
+                                  v-model="formData.corporateIdCardFileBack"></one-image-upload>
 
               </el-form-item>
             </el-col>
           </el-row>
 
-          <el-row v-if="formData.contact_id_card!==formData.corporate_id_card">
+          <el-row v-if="formData.contactIdCard!==formData.corporateIdCard">
             <el-col :span="8">
-              <el-form-item label="账户代表授权委托书" prop="contact_authorize_file">
-                <one-image-upload v-model="formData.contact_authorize_file"></one-image-upload>
+              <el-form-item label="账户代表授权委托书" prop="contactAuthorizeFile">
+                <one-image-upload v-model="formData.contactAuthorizeFile"></one-image-upload>
                 <template #label>
                   账户代表授权委托书（
                   <el-link type="primary" @click="handleDownloadTemp">点击下载模板</el-link>
@@ -65,16 +65,16 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="账户代表身份证正面" prop="contact_id_card_file_front">
+              <el-form-item label="账户代表身份证正面" prop="contactIdCardFileFront">
                 <one-image-upload remark="身份证正面"
-                                  v-model="formData.contact_id_card_file_front"></one-image-upload>
+                                  v-model="formData.contactIdCardFileFront"></one-image-upload>
 
               </el-form-item>
             </el-col>
 
             <el-col :span="8">
-              <el-form-item label="账户代表身份证反面" prop="contact_id_card_file_back">
-                <one-image-upload remark="身份证反面" v-model="formData.contact_id_card_file_back"></one-image-upload>
+              <el-form-item label="账户代表身份证反面" prop="contactIdCardFileBack">
+                <one-image-upload remark="身份证反面" v-model="formData.contactIdCardFileBack"></one-image-upload>
 
               </el-form-item>
             </el-col>
@@ -120,14 +120,14 @@ const activeNames = ref(['1', '2'])
 
 const formLoading = ref(false) // 表单的加载中：1）修改时的数据加载；2）提交的按钮禁用
 const formRules = reactive({
-  bln_file: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
-  unit_code_file: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
-  tax_id_file: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
-  corporate_id_card_file_front: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
-  corporate_id_card_file_back: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
-  contact_authorize_file: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
-  contact_id_card_file_front: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
-  contact_id_card_file_back: [{required: true, message: '此文件还未上传', trigger: 'blur'}]
+  blnFile: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
+  unitCodeFile: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
+  taxIdFile: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
+  corporateIdCardFileFront: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
+  corporateIdCardFileBack: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
+  contactAuthorizeFile: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
+  contactIdCardFileFront: [{required: true, message: '此文件还未上传', trigger: 'blur'}],
+  contactIdCardFileBack: [{required: true, message: '此文件还未上传', trigger: 'blur'}]
 })
 const formData = props.value
 const formRef = ref() // 表单 Ref

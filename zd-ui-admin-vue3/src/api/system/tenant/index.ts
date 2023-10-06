@@ -1,4 +1,33 @@
 import request from '@/config/axios'
+import {CommonStatusEnum} from "@/utils/constants";
+
+
+export interface AuthTenantVO extends TenantVO {
+  threeInOne: boolean,
+  uscc: string,
+  bln: string,
+  blnFile: string,
+  unitCode: string,
+  unitCodeFile: string,
+  taxId: string,
+  taxIdFile: string,
+  industry: string,
+  industryText: string,
+  registrationDate: Date,
+  registeredCapital: string,
+  registeredProvince: string,
+  registeredCity: string,
+  registeredAddress: string,
+  corporate: string,
+  corporateIdCard: string,
+  corporateIdCardFileFront: string,
+  corporateIdCardFileBack: string,
+  enterpriseNature: string,
+  contactIdCard: string,
+  contactAuthorizeFile: string,
+  contactIdCardFileFront: string,
+  contactIdCardFileBack: string,
+}
 
 export interface TenantVO {
   id: number
@@ -39,6 +68,17 @@ export const getTenantPage = (params: TenantPageReqVO) => {
 // 查询租户详情
 export const getTenant = (id: number) => {
   return request.get({ url: '/system/tenant/get?id=' + id })
+}
+
+
+// 租户开户创建
+export const authTenantCreate = (data: AuthTenantVO) => {
+  return request.post({ url: '/system/tenant/auth-create', data })
+}
+
+// 租户开户更新
+export const authTenantUpdate = (data: AuthTenantVO) => {
+  return request.post({ url: '/system/tenant/auth-update', data })
 }
 
 // 新增租户

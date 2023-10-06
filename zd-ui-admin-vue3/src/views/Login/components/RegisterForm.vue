@@ -219,8 +219,7 @@ const loginRegister = async () => {
           type: 'warning'
         })
         authUtil.setToken(res)
-        await replace({name:"TenantAuth"})
-
+        await replace({name:"TenantAuth",query:{"tenantId":"1"}})
       } finally {
         loading.value = false
       }

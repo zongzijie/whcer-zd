@@ -43,4 +43,79 @@ public class TenantBaseVO {
     @NotNull(message = "账号数量不能为空")
     private Integer accountCount;
 
+    @Schema(description = "联系人身份证号")
+    private String contactIdCard;
+
+    @Schema(description = "联系人授权书")
+    private String contactAuthorizeFile;
+
+    @Schema(description = "联系人身份证正面")
+    private String contactIdCardFileFront;
+
+    @Schema(description = "联系人身份证反面")
+    private String contactIdCardFileBack;
+
+    @Schema(description = "是否三证合一")
+    private Boolean threeInOne;
+
+    @Schema(description = "统一社会信用代码")
+    private String uscc;
+
+    @Schema(description = "营业执照注册号")
+    private String bln;
+
+    @Schema(description = "营业执照")
+    private String blnFile;
+
+    @Schema(description = "组织机构代码")
+    private String unitCode;
+
+    @Schema(description = "组织机构代码证")
+    private String unitCodeFile;
+
+    @Schema(description = "税务登记证号", example = "25345")
+    private String taxId;
+
+    @Schema(description = "税务登记证")
+    private String taxIdFile;
+
+    @Schema(description = "所属行业编码")
+    private String industry;
+
+    @Schema(description = "所属行业名称")
+    private String industryText;
+
+    @Schema(description = "注册日期")
+    private LocalDateTime registrationDate;
+
+    @Schema(description = "注册资本（万元）")
+    private Integer registeredCapital;
+
+    @Schema(description = "注册省份")
+    private String registeredProvince;
+
+    @Schema(description = "注册城市")
+    private String registeredCity;
+
+    @Schema(description = "注册区县")
+    private String registeredCounty;
+
+    @Schema(description = "注册地址")
+    private String registeredAddress;
+
+    @Schema(description = "法人信息")
+    private String corporate;
+
+    @Schema(description = "法人身份证号")
+    private String corporateIdCard;
+
+    @Schema(description = "法人身份证正面")
+    private String corporateIdCardFileFront;
+
+    @Schema(description = "法人身份证反面")
+    private String corporateIdCardFileBack;
+
+    @Schema(description = "企业性质")
+    private String enterpriseNature;
+
 }

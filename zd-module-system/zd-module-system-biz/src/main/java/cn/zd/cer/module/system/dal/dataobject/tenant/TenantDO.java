@@ -78,5 +78,105 @@ public class TenantDO extends BaseDO {
      * 账号数量
      */
     private Integer accountCount;
+    /**
+     * 联系人身份证号
+     */
+    private String contactIdCard;
+    /**
+     * 联系人授权书
+     */
+    private String contactAuthorizeFile;
+    /**
+     * 联系人身份证正面
+     */
+    private String contactIdCardFileFront;
+    /**
+     * 联系人身份证反面
+     */
+    private String contactIdCardFileBack;
+    /**
+     * 是否三证合一
+     */
+    private Boolean threeInOne;
+    /**
+     * 统一社会信用代码
+     */
+    private String uscc;
+    /**
+     * 营业执照注册号
+     */
+    private String bln;
+    /**
+     * 营业执照
+     */
+    private String blnFile;
+    /**
+     * 组织机构代码
+     */
+    private String unitCode;
+    /**
+     * 组织机构代码证
+     */
+    private String unitCodeFile;
+    /**
+     * 税务登记证号
+     */
+    private String taxId;
+    /**
+     * 税务登记证
+     */
+    private String taxIdFile;
+    /**
+     * 所属行业编码
+     */
+    private String industry;
+    /**
+     * 所属行业名称
+     */
+    private String industryText;
+    /**
+     * 注册日期
+     */
+    private LocalDateTime registrationDate;
+    /**
+     * 注册资本（万元）
+     */
+    private Integer registeredCapital;
+    /**
+     * 注册省份
+     */
+    private String registeredProvince;
+    /**
+     * 注册城市
+     */
+    private String registeredCity;
+    /**
+     * 注册区县
+     */
+    private String registeredCounty;
+    /**
+     * 注册地址
+     */
+    private String registeredAddress;
+    /**
+     * 法人信息
+     */
+    private String corporate;
+    /**
+     * 法人身份证号
+     */
+    private String corporateIdCard;
+    /**
+     * 法人身份证正面
+     */
+    private String corporateIdCardFileFront;
+    /**
+     * 法人身份证反面
+     */
+    private String corporateIdCardFileBack;
+    /**
+     * 企业性质
+     */
+    private String enterpriseNature;
 
 }

@@ -14,7 +14,7 @@
       :on-error="submitFormError"
       :on-progress="handleProgress"
       :on-exceed="handleExceed"
-      :on-success="(a,b)=>{submitFormSuccess(a,b,'bln_file')}"
+      :on-success="submitFormSuccess"
       :action="url"
   >
     <el-icon class="el-icon--upload">
@@ -37,7 +37,6 @@
   </el-dialog>
 </template>
 <script setup lang="tsx">
-import * as PostApi from "@/api/system/post";
 
 defineOptions({name: 'OneImageUpload'})
 import {ref} from 'vue'
@@ -62,11 +61,10 @@ const message = useMessage() // 消息弹窗
 const fileLoading = ref(false)
 
 const formLoading = ref(false) // 表单的加载中：1）修改时的数据加载；2）提交的按钮禁用
-const file = ref({url: props.img, name: props.name})
 
-const fileList = props.img ? ref<UploadUserFile[]>([
+const fileList = props.modelValue ? ref<UploadUserFile[]>([
   {
-    name: props.name,
+    name: props.modelValue,
     url: props.modelValue,
   }
 ]) : ref<UploadUserFile[]>([])
@@ -122,9 +120,7 @@ const submitFormSuccess = (response,
   fileLoading.value = false
   // 提示成功，并刷新
   message.success(t('common.createSuccess'))
-  file.value.url = response.data
   emit('update:modelValue', response.data)
-  emit('change', file)
 }
 
 /** 上传错误提示 */
@@ -132,7 +128,6 @@ const submitFormError = (): void => {
   message.error('上传失败，请您重新上传！')
   formLoading.value = false
   fileLoading.value = false
-  file.value.url = undefined
   uploadRef.value?.clearFiles()
 }
 

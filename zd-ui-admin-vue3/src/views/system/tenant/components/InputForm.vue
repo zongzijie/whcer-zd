@@ -31,13 +31,13 @@
             </el-col>
             <el-col :span="12"
             >
-              <el-form-item label="三证合一" prop="three_in_one">
-                <el-switch v-model="formData.three_in_one"/>
+              <el-form-item label="三证合一" prop="threeInOne">
+                <el-switch v-model="formData.threeInOne"/>
               </el-form-item>
             </el-col>
           </el-row>
 
-          <el-row v-if="formData.three_in_one">
+          <el-row v-if="formData.threeInOne">
             <el-col :span="12">
               <el-form-item label="统一社会信用代码" prop="uscc">
                 <el-input v-model="formData.uscc" placeholder="请填写统一社会信用代码"/>
@@ -59,8 +59,8 @@
           <template v-else>
             <el-row>
               <el-col :span="12">
-                <el-form-item label="组织机构代码" prop="unit_code">
-                  <el-input v-model="formData.unit_code" placeholder="请输入组织机构代码"/>
+                <el-form-item label="组织机构代码" prop="unitCode">
+                  <el-input v-model="formData.unitCode" placeholder="请输入组织机构代码"/>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -72,8 +72,8 @@
 
             <el-row>
               <el-col :span="12">
-                <el-form-item label="税务登记证号" prop="tax_id">
-                  <el-input v-model="formData.tax_id" placeholder="请输入税务登记证号"/>
+                <el-form-item label="税务登记证号" prop="taxId">
+                  <el-input v-model="formData.taxId" placeholder="请输入税务登记证号"/>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -93,18 +93,19 @@
 
           <el-row>
             <el-col :span="12">
-              <el-form-item label="注册日期" prop="registration_date">
+              <el-form-item label="注册日期" prop="registrationDate">
                 <el-date-picker
-                    v-model="formData.registration_date"
+                    v-model="formData.registrationDate"
                     type="date"
+                    value-format="x"
                     placeholder="请选择日期"
                     style="width: 100%"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="注册资本" prop="registered_capital">
-                <el-input type="number" v-model="formData.registered_capital" placeholder="请填写注册资本">
+              <el-form-item label="注册资本" prop="registeredCapital">
+                <el-input type="number" v-model="formData.registeredCapital" placeholder="请填写注册资本">
                   <template #append>万元</template>
                 </el-input>
               </el-form-item>
@@ -118,16 +119,16 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="法人身份证号" prop="corporate_id_card">
-                <el-input v-model="formData.corporate_id_card" placeholder="请输入法人身份证号"/>
+              <el-form-item label="法人身份证号" prop="corporateIdCard">
+                <el-input v-model="formData.corporateIdCard" placeholder="请输入法人身份证号"/>
               </el-form-item>
             </el-col>
           </el-row>
 
           <el-row>
             <el-col :span="12">
-              <el-form-item label="企业性质" prop="enterprise_nature">
-                <el-radio-group v-model="formData.enterprise_nature" class="ml-4">
+              <el-form-item label="企业性质" prop="enterpriseNature">
+                <el-radio-group v-model="formData.enterpriseNature" class="ml-4">
                   <el-radio v-for="dict in getStrDictOptions(DICT_TYPE.SYSTEM_TENANT_ENTERPRISE_NATURE)"
                             :key="dict.value" :label="dict.value" size="large">{{ dict.label }}
                   </el-radio>
@@ -135,9 +136,9 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="注册地址" prop="registered_address">
+              <el-form-item label="注册地址" prop="registeredAddress">
                 <el-input
-                    v-model="formData.registered_address"
+                    v-model="formData.registeredAddress"
                     placeholder="请填写最新的详细的办公地址，可与证照地址不一致"
                     class="input-with-select"
                 >
@@ -169,22 +170,22 @@
           </template>
           <el-row>
             <el-col :span="12">
-              <el-form-item label="姓名" prop="contact_name">
-                <el-input v-model="formData.contact_name" disabled placeholder=""/>
+              <el-form-item label="姓名" prop="contactName">
+                <el-input v-model="formData.contactName" disabled placeholder=""/>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item label="手机号" prop="contact_mobile">
-                <el-input v-model="formData.contact_mobile" disabled placeholder=""/>
+              <el-form-item label="手机号" prop="contactMobile">
+                <el-input v-model="formData.contactMobile" disabled placeholder=""/>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
               <el-form-item label="身份证号码" prop="corporate">
-                <el-input v-model="formData.contact_id_card" placeholder="请填写身份证号码"/>
+                <el-input v-model="formData.contactIdCard" placeholder="请填写身份证号码"/>
               </el-form-item>
             </el-col>
           </el-row>
@@ -217,7 +218,7 @@ import {useTagsViewStore} from "@/store/modules/tagsView";
 const props = defineProps({
   value: propTypes.object.def({})
 })
-const emit = defineEmits(['change', 'submit','prev'])
+const emit = defineEmits(['change', 'submit','prev','kuaijie'])
 const {currentRoute, push,replace} = useRouter()
 
 const active = ref(0)
@@ -259,39 +260,39 @@ const formData = props.value
 
 const formRules = reactive({
   name: [{required: true, message: '此项必填', trigger: 'blur'}],
-  three_in_one: [{required: true, message: '此项必填', trigger: 'blur'}],
+  threeInOne: [{required: true, message: '此项必填', trigger: 'blur'}],
   uscc: [{required: true, message: '此项必填', trigger: 'blur'}],
   bln: [{required: true, message: '此项必填', trigger: 'blur'}],
-  unit_code: [{required: true, message: '此项必填', trigger: 'blur'}],
-  tax_id: [{required: true, message: '此项必填', trigger: 'blur'}],
+  unitCode: [{required: true, message: '此项必填', trigger: 'blur'}],
+  taxId: [{required: true, message: '此项必填', trigger: 'blur'}],
   industry: [{required: true, message: '此项必填', trigger: 'blur'}],
-  registration_date: [{required: true, message: '此项必填', trigger: 'blur'}],
-  registered_capital: [{required: true, message: '此项必填', trigger: 'blur'}],
-  registered_province: [{required: true, message: '此项必填', trigger: 'blur'}],
-  registered_city: [{required: true, message: '此项必填', trigger: 'blur'}],
-  registered_county: [{required: true, message: '此项必填', trigger: 'blur'}],
-  registered_address: [{required: true, message: '此项必填', trigger: 'blur'}],
+  registrationDate: [{required: true, message: '此项必填', trigger: 'blur'}],
+  registeredCapital: [{required: true, message: '此项必填', trigger: 'blur'}],
+  registeredProvince: [{required: true, message: '此项必填', trigger: 'blur'}],
+  registeredCity: [{required: true, message: '此项必填', trigger: 'blur'}],
+  registeredCounty: [{required: true, message: '此项必填', trigger: 'blur'}],
+  registeredAddress: [{required: true, message: '此项必填', trigger: 'blur'}],
   corporate: [{required: true, message: '此项必填', trigger: 'blur'}],
-  corporate_id_card: [{required: true, message: '此项必填', trigger: 'blur'}],
-  enterprise_nature: [{required: true, message: '此项必填', trigger: 'blur'}],
-  contact_name: [{required: true, message: '此项必填', trigger: 'blur'}],
-  contact_mobile: [{required: true, message: '此项必填', trigger: 'blur'}],
-  contact_id_card: [{required: true, message: '此项必填', trigger: 'blur'}]
+  corporateIdCard: [{required: true, message: '此项必填', trigger: 'blur'}],
+  enterpriseNature: [{required: true, message: '此项必填', trigger: 'blur'}],
+  contactName: [{required: true, message: '此项必填', trigger: 'blur'}],
+  contactMobile: [{required: true, message: '此项必填', trigger: 'blur'}],
+  contactIdCard: [{required: true, message: '此项必填', trigger: 'blur'}]
 })
 
 const formRef = ref() // 表单 Ref
 const kuaijie = () => {
-  message.success("快捷注册")
+  emit('kuaijie')
 }
 const handleChange = (e) => {
   if (e){
-    formData.registered_province=e[0]
-    formData.registered_city=e[1]
-    formData.registered_county=e[2]
+    formData.registeredProvince=e[0]
+    formData.registeredCity=e[1]
+    formData.registeredCounty=e[2]
   }
 }
 const countySelect = computed(() => {
-  return [formData.registered_province,formData.registered_city,formData.registered_county]
+  return [parseInt(formData.registeredProvince),parseInt(formData.registeredCity),parseInt(formData.registeredCounty)]
 })
 const next = async () => {
   console.log('form', formData)
@@ -306,7 +307,6 @@ const prev =  () => {
 /** 初始化 **/
 onMounted(() => {
   getList()
-
 })
 </script>
 <style lang="less" scoped>
